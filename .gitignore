@@ -1,0 +1,26 @@
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+
+# Agent output (contains run data and cached LLM answers)
+runs/
+runs-*/
+.llm-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+
+# Large media: share videos on LinkedIn/YouTube instead
+*.mov
+*.mp4

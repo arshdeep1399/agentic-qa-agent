@@ -1,0 +1,53 @@
+{
+  // Run and Debug panel (Ctrl/Cmd+Shift+D) -> pick a configuration -> F5.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "QA agent: full run (watch browser)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "qa_agent",
+      "cwd": "${workspaceFolder}",
+      "args": ["--url", "${input:appUrl}", "--prd", "${input:prdPath}", "--headed"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "QA agent: full run (fast, no window)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "qa_agent",
+      "cwd": "${workspaceFolder}",
+      "args": ["--url", "${input:appUrl}", "--prd", "${input:prdPath}"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "QA agent: one suite only",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "qa_agent",
+      "cwd": "${workspaceFolder}",
+      "args": ["--url", "${input:appUrl}", "--prd", "${input:prdPath}", "--headed", "--only", "${input:suite}"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "QA agent: check API key",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "qa_agent",
+      "cwd": "${workspaceFolder}",
+      "args": ["--check-llm"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {"id": "appUrl", "type": "promptString", "description": "App URL", "default": "http://localhost:5173"},
+    {"id": "prdPath", "type": "promptString", "description": "Path to the spec (PRD.md)",
+     "default": "../agentic-qa/test-website/PRD.md"},
+    {"id": "suite", "type": "pickString", "description": "Which suite?",
+     "options": ["session", "accounts", "history", "transfers", "profile_ui"], "default": "transfers"}
+  ]
+}

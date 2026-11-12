@@ -1,0 +1,484 @@
+[
+  {
+    "id": "GEN-01",
+    "section": "Purpose",
+    "text": "The application must never initiate real payments or connect to an external bank.",
+    "atomic": [
+      "Verify no network request is made to any external banking API endpoint during any user action",
+      "Confirm that payment initiation buttons are disabled or hidden in the demo UI"
+    ],
+    "test_ideas": [
+      "[negative] Attempt to trigger a payment flow and assert that the request URL does not match any real payment provider domain",
+      "[edge] Inspect network traffic after a simulated transfer and ensure only internal mock endpoints are called"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SES-01",
+    "section": "Users and access",
+    "text": "The target has one seeded demo customer.",
+    "atomic": [
+      "Check that the demo database contains exactly one customer record on initial load"
+    ],
+    "test_ideas": [
+      "[positive] Load the app and query the seeded data store for customer count = 1"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SES-02",
+    "section": "Users and access",
+    "text": "The landing page provides a clearly labeled Enter Demo action. It opens the demo dashboard without requiring a password or real identity information.",
+    "atomic": [
+      "Verify the landing page shows a button labeled \"Enter Demo\"",
+      "Confirm clicking the button navigates to the dashboard without a login prompt"
+    ],
+    "test_ideas": [
+      "[positive] Click \"Enter Demo\" and assert URL changes to /dashboard and no auth modal appears",
+      "[negative] Attempt to access /dashboard directly via URL and assert redirect to landing page"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SES-03",
+    "section": "Users and access",
+    "text": "The header identifies the active demo customer and provides a Log out action.",
+    "atomic": [
+      "Assert the header displays the demo customer's display name",
+      "Assert a \"Log out\" link/button is present in the header"
+    ],
+    "test_ideas": [
+      "[positive] After entering demo, locate header text matching seeded customer name and click Log out to verify visibility"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SES-04",
+    "section": "Users and access",
+    "text": "Logging out returns the user to the landing page. Protected dashboard views should not remain usable after logout; direct navigation to them should return the user to the landing page or an access-required state.",
+    "atomic": [
+      "Confirm Log out returns user to landing page URL",
+      "Attempt to navigate to a protected dashboard URL after logout and verify redirect to landing page or access\u2011required state"
+    ],
+    "test_ideas": [
+      "[positive] Log out, then type /dashboard in address bar and assert redirect",
+      "[negative] Use browser back button after logout and verify protected view is not displayed"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SES-05",
+    "section": "Users and access",
+    "text": "Refreshing while in a valid demo session should preserve that session. A logged-out user must not regain access merely by refreshing a protected page.",
+    "atomic": [
+      "Refresh the browser while logged in and verify session remains active (dashboard still visible)",
+      "Refresh a protected page while logged out and verify user is redirected to landing page"
+    ],
+    "test_ideas": [
+      "[positive] While on dashboard, reload page and assert still on dashboard with same customer header",
+      "[negative] Log out, navigate to /account/1, reload and assert redirect to landing"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "DSH-01",
+    "section": "Dashboard and accounts",
+    "text": "The dashboard shows the customer's checking and savings accounts.",
+    "atomic": [
+      "Verify the dashboard lists exactly two accounts: checking and savings"
+    ],
+    "test_ideas": [
+      "[positive] Count account cards on dashboard and match names to seeded data"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "DSH-02",
+    "section": "Dashboard and accounts",
+    "text": "Each account displays a readable account name, a masked account identifier, account type, and current available balance in USD.",
+    "atomic": [
+      "Each account card shows a readable name, masked identifier (e.g., ****1234), account type, and balance in USD"
+    ],
+    "test_ideas": [
+      "[positive] Inspect each account row for name, masked ID pattern, type label, and \"$\" balance"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "DSH-03",
+    "section": "Dashboard and accounts",
+    "text": "Balances are displayed to two decimal places. The UI must not expose a full account identifier.",
+    "atomic": [
+      "Assert balances are formatted with two decimal places",
+      "Confirm full account numbers are never displayed in the UI"
+    ],
+    "test_ideas": [
+      "[positive] Regex match balance text \\d+\\.\\d{2}",
+      "[negative] Search page source for any unmasked 10\u2011digit account number"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "DSH-04",
+    "section": "Dashboard and accounts",
+    "text": "Selecting an account opens an account detail view with its current balance and related transaction history.",
+    "atomic": [
+      "Click an account card and verify navigation to an account detail view showing current balance and transaction list"
+    ],
+    "test_ideas": [
+      "[positive] Select checking account, assert URL /account/{id}, balance matches dashboard, and transaction table loads"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "DSH-05",
+    "section": "Dashboard and accounts",
+    "text": "Account balances shown on the dashboard and detail view must agree with the latest successful transactions.",
+    "atomic": [
+      "Compare displayed balances on dashboard and detail view with the sum of latest successful transactions from the seed"
+    ],
+    "test_ideas": [
+      "[positive] Retrieve latest transaction amounts via API mock, compute expected balance, and assert UI matches"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-01",
+    "section": "Transfers between owned accounts",
+    "text": "The user can transfer funds between the checking and savings accounts owned by the demo customer.",
+    "atomic": [
+      "Verify a transfer form is accessible from the dashboard and allows selection of checking as source and savings as destination"
+    ],
+    "test_ideas": [
+      "[positive] Open transfer modal, select source=checking, destination=savings"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-02",
+    "section": "Transfers between owned accounts",
+    "text": "The transfer form includes source account, destination account, amount, and an optional memo.",
+    "atomic": [
+      "Confirm the transfer form contains fields: source account dropdown, destination account dropdown, amount input, optional memo textarea, and a submit button"
+    ],
+    "test_ideas": [
+      "[positive] Locate each form element by label text"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-03",
+    "section": "Transfers between owned accounts",
+    "text": "The source and destination must be different accounts. Same-account transfers must be rejected with a clear explanation and must not alter balances or create a transaction.",
+    "atomic": [
+      "Attempt same\u2011account transfer and assert validation error is shown and no balances change",
+      "Verify no new transaction record appears after rejection"
+    ],
+    "test_ideas": [
+      "[negative] Select checking as both source and destination, submit, expect error message, then check balances unchanged",
+      "[edge] Repeat with savings as both source and destination"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-04",
+    "section": "Transfers between owned accounts",
+    "text": "Amount must be a positive number greater than zero, with no more than two digits after the decimal point. Blank, zero, negative, non-numeric, and over-precision values must be rejected with a clear validation message. Rejected input must not create a transaction or change balances.",
+    "atomic": [
+      "Submit transfer with blank, zero, negative, non\u2011numeric, or >2\u2011decimal amount and verify appropriate validation messages and no balance change"
+    ],
+    "test_ideas": [
+      "[negative] Iterate invalid inputs (\"\", \"0\", \"-5\", \"abc\", \"10.123\") and assert rejection each time"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-05",
+    "section": "Transfers between owned accounts",
+    "text": "The amount must not exceed the source account's available balance. If funds are insufficient, the transfer must be rejected, both balances must remain unchanged, and no completed transfer must appear in history.",
+    "atomic": [
+      "Attempt transfer amount greater than source balance and assert rejection, balances unchanged, and no transaction recorded"
+    ],
+    "test_ideas": [
+      "[negative] Use source checking balance $100, try transfer $200, expect error and unchanged balances"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-06",
+    "section": "Transfers between owned accounts",
+    "text": "A valid transfer is atomic: the source balance decreases by the amount and the destination balance increases by the same amount. No partial transfer is allowed.",
+    "atomic": [
+      "Perform a valid transfer and verify source balance decreases and destination balance increases by exactly the same amount"
+    ],
+    "test_ideas": [
+      "[positive] Transfer $25.00, capture pre\u2011balances, submit, then assert post\u2011balances reflect -$25.00 and +$25.00"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-07",
+    "section": "Transfers between owned accounts",
+    "text": "A successful transfer creates one completed transfer record that can be found in both relevant account histories. The record shows the amount, date and time, source, destination, status, and memo if supplied.",
+    "atomic": [
+      "After a successful transfer, locate a single transaction record in both source and destination histories containing amount, timestamp, source, destination, status=Completed, and memo if provided"
+    ],
+    "test_ideas": [
+      "[positive] Submit transfer with memo \"test\", then search each account history for a record matching all fields"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-08",
+    "section": "Transfers between owned accounts",
+    "text": "The UI reports success only after the transfer has been committed. If a transfer is rejected or fails, the UI must explain that it did not complete and must not show a success state.",
+    "atomic": [
+      "Verify UI shows a loading indicator during processing and only displays a success toast after commit; on rejection, an error toast appears and no success state is shown"
+    ],
+    "test_ideas": [
+      "[positive] Mock successful response, ensure loading spinner appears then success message",
+      "[negative] Mock validation failure, ensure error message appears and no success toast"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "TRF-09",
+    "section": "Transfers between owned accounts",
+    "text": "Refreshing after a successful transfer must preserve the updated balances and transaction record.",
+    "atomic": [
+      "Refresh the page after a successful transfer and assert balances and the new transaction record persist"
+    ],
+    "test_ideas": [
+      "[positive] Complete transfer, reload, then verify UI still shows updated balances and transaction in history"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-01",
+    "section": "Transaction history",
+    "text": "The user can view a combined transaction history and account-specific history.",
+    "atomic": [
+      "Confirm a combined history view lists transactions from both checking and savings accounts"
+    ],
+    "test_ideas": [
+      "[positive] Open global history tab and assert rows contain mixed account identifiers"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-02",
+    "section": "Transaction history",
+    "text": "Each row shows date and time, description or memo, transaction type, amount, status, and relevant account. Amount direction should be clear for deposits, withdrawals, and transfers.",
+    "atomic": [
+      "Each history row displays date/time, description/memo, type, amount with correct sign, status, and associated account"
+    ],
+    "test_ideas": [
+      "[positive] Validate column headers and sample row content for required fields"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-03",
+    "section": "Transaction history",
+    "text": "The user can filter history by account, transaction type, status, and date range. When filters are applied, every displayed row must satisfy all selected filters.",
+    "atomic": [
+      "Apply filters (account, type, status, date range) and verify every displayed row satisfies all selected criteria"
+    ],
+    "test_ideas": [
+      "[positive] Filter to checking, type=Transfer, status=Completed, date last 7 days; assert all rows match"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-04",
+    "section": "Transaction history",
+    "text": "The start and end dates are inclusive. A transaction occurring on either boundary date must be included when it matches the other filters.",
+    "atomic": [
+      "Set start and end dates inclusive and verify transactions on boundary dates appear"
+    ],
+    "test_ideas": [
+      "[edge] Choose start=date of known transaction, end=next day; assert boundary transaction is listed"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-05",
+    "section": "Transaction history",
+    "text": "An empty result set must show a clear empty state, not an error or unrelated transactions.",
+    "atomic": [
+      "Apply a filter combination that yields no results and verify a clear empty\u2011state message is shown"
+    ],
+    "test_ideas": [
+      "[edge] Filter by future date range; expect empty state text"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "HIS-06",
+    "section": "Transaction history",
+    "text": "Clearing filters restores the unfiltered history.",
+    "atomic": [
+      "Clear all filters and assert the full unfiltered transaction list reappears"
+    ],
+    "test_ideas": [
+      "[positive] After applying filters, click \"Clear\" and verify row count matches original total"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "PRF-01",
+    "section": "Profile",
+    "text": "A profile view displays only synthetic demo-customer details, such as display name and a masked email address.",
+    "atomic": [
+      "Profile view shows display name and email masked as ***@example.com"
+    ],
+    "test_ideas": [
+      "[positive] Open profile page and assert email contains only domain part with masked local part"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "PRF-02",
+    "section": "Profile",
+    "text": "The view must not reveal passwords, authentication tokens, full account identifiers, or data belonging to another user.",
+    "atomic": [
+      "Verify profile page does not contain password fields, auth tokens, full account numbers, or other users' data"
+    ],
+    "test_ideas": [
+      "[negative] Scan page source for patterns matching full account numbers or token strings"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "UI-01",
+    "section": "General interface behavior",
+    "text": "The target works in a current desktop browser at a 1280 \u00d7 800 viewport and remains usable at narrower widths.",
+    "atomic": [
+      "Render the app at 1280\u00d7800 and at 1024\u00d7768 and assert all primary controls remain visible and usable"
+    ],
+    "test_ideas": [
+      "[edge] Resize viewport to 600px width and verify navigation still accessible via hamburger menu"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "UI-02",
+    "section": "General interface behavior",
+    "text": "Interactive controls have readable labels and communicate loading, success, validation, and failure states.",
+    "atomic": [
+      "All interactive controls have visible text labels and display distinct states for loading, success, validation error, and failure"
+    ],
+    "test_ideas": [
+      "[positive] Trigger a transfer, observe loading spinner, then success toast; induce error and observe validation message"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "UI-03",
+    "section": "General interface behavior",
+    "text": "A submitted action should not silently disappear. While waiting, the UI should show a loading state or otherwise prevent accidental duplicate submission.",
+    "atomic": [
+      "Submitting a form disables the submit button and shows a loading indicator until response arrives, preventing duplicate clicks"
+    ],
+    "test_ideas": [
+      "[positive] Click submit rapidly; assert only one request is sent and button stays disabled"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "UI-04",
+    "section": "General interface behavior",
+    "text": "Navigation links and buttons lead to the labeled destination or perform the labeled action.",
+    "atomic": [
+      "Each navigation link/button leads to the page labeled by its text"
+    ],
+    "test_ideas": [
+      "[positive] Click \"History\" link and verify URL /history and header matches"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "UI-05",
+    "section": "General interface behavior",
+    "text": "A recoverable error must leave the user able to retry or return to the dashboard.",
+    "atomic": [
+      "When a recoverable error occurs (e.g., validation failure), the UI presents a retry option and does not navigate away from the current view"
+    ],
+    "test_ideas": [
+      "[negative] Submit invalid transfer, verify error message with \"Retry\" button, click retry and ensure form remains"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SEED-01",
+    "section": "Seed data expectations",
+    "text": "The demo begins with one customer, one checking account, one savings account, and enough historical transactions to exercise account, type, status, and date filters.",
+    "atomic": [
+      "Initial seed contains one customer, one checking account, one savings account, and at least five historical transactions"
+    ],
+    "test_ideas": [
+      "[positive] Query seed data store and count entities to match expectations"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SEED-02",
+    "section": "Seed data expectations",
+    "text": "Seed records should include multiple dates and at least one transfer between the two accounts.",
+    "atomic": [
+      "Seed includes transactions on multiple distinct dates and at least one transfer between checking and savings"
+    ],
+    "test_ideas": [
+      "[positive] Scan seed transaction list for different date values and a record with type=Transfer between the two accounts"
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  },
+  {
+    "id": "SEED-03",
+    "section": "Seed data expectations",
+    "text": "The demo has no signup, external payment, bill-pay, loan, card, or multi-user features.",
+    "atomic": [
+      "UI does not expose signup, external payment, bill\u2011pay, loan, card, or multi\u2011user features"
+    ],
+    "test_ideas": [
+      "[negative] Search the rendered UI for links or buttons containing keywords \"Sign up\", \"Pay\", \"Loan\", \"Card\", \"Add User\""
+    ],
+    "verdict": "unverified",
+    "verdict_reason": ""
+  }
+]
